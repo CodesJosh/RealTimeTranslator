@@ -99,10 +99,9 @@ class TraductorOverlay:
         silence_counter = 0
         is_recording = False
         
-        # --- AJUSTES PARA TU VOLUMEN BAJO ---
-        SILENCE_THRESHOLD = 20   # Bajamos el umbral al mínimo
+        SILENCE_THRESHOLD = 20 
         SILENCE_LIMIT = 8        
-        AMPLIFICACION = 15.0     # Multiplicador de volumen (x15)
+        AMPLIFICACION = 15.0   
         # ------------------------------------
 
         while True:
@@ -110,16 +109,14 @@ class TraductorOverlay:
                 data = stream.read(CHUNK, exception_on_overflow=False)
                 audio_chunk = np.frombuffer(data, dtype=np.int16)
                 
-                # --- AQUI ESTÁ LA MAGIA: AMPLIFICAMOS EL AUDIO ---
-                # Multiplicamos el volumen x15 para que la IA escuche bien
                 audio_boosted = np.clip(audio_chunk * AMPLIFICACION, -32768, 32767).astype(np.int16)
                 
-                volumen = np.abs(audio_boosted).mean() # Medimos el volumen YA amplificado
+                volumen = np.abs(audio_boosted).mean() 
 
                 if volumen > SILENCE_THRESHOLD:
                     is_recording = True
                     silence_counter = 0
-                    frames.append(audio_boosted.tobytes()) # Guardamos el audio fuerte
+                    frames.append(audio_boosted.tobytes())
                 elif is_recording:
                     silence_counter += 1
                     frames.append(audio_boosted.tobytes())
